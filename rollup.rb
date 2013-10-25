@@ -8,11 +8,14 @@ def load_from_file( filename )
   end
 end
 
-grouped_by_cities = load_from_file('cities.json')
+grouped_by_cities = load_from_file('newCities.json')
 grouped_by_countries = Hash.new
 
+results = []
 
 grouped_by_cities.each do |city|
+
+  results << { id: city["city"], text: city["city"]}
 
   # create the country if not yet in hash
   grouped_by_countries.store(city["country"], []) unless grouped_by_countries.has_key?(city["country"])
@@ -21,8 +24,30 @@ grouped_by_cities.each do |city|
   grouped_by_countries[city["country"]] << city["city"]
 end
 
-puts grouped_by_countries
 
-File.open("countries.json","w") do |f|
-  f.write(grouped_by_countries.to_json)
+File.open("cities_list.json","w") do |f|
+  f.write(results.to_json)
+end
+
+
+
+results = Hash.new
+
+grouped_by_cities.each do |city|
+  results[city["city"]] = city["country"]
+end
+
+File.open("cities_to_countries.json","w") do |f|
+  f.write(results.to_json)
+end
+
+
+
+results = Hash.new
+Country.all.each do |country|
+  results[country.name] = country.id
+end
+
+File.open("countryIdLookup.json","w") do |f|
+  f.write(results.to_json)
 end
